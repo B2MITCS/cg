@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Certificate Generator</title>
+    <script>
+        async function generateCertificate() {
+            const username = document.getElementById('username').value;
+            const companyName = document.getElementById('companyName').value;
+
+            const response = await fetch("/generateCertificate", { // Corrected URL
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, companyName })
+            });
+
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'certificate.pdf';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+                alert('Certificate generated successfully');
+            } else {
+                alert('Error generating certificate');
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Certificate Generator</h1>
+        
+    <form onsubmit="event.preventDefault(); generateCertificate();" method="POST">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br><br>
+        <label for="companyName">Company Name:</label>
+        <input type="text" id="companyName" name="companyName" required><br><br>
+        <input type="submit" value="Generate Certificate">
+    </form>
+    
+</body>
+</html>
